@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/xadmin.css">
+    <script src="/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/js/xadmin.js"></script>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+</div>
+<div class="layui-fluid">
+    <form class="layui-form-pane">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md8 ">
+                <div class="layui-card">
+                    <div class="layui-card-body">
+                        <div class="layui-form-item layui-form-text">
+                            <div class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="progress">
+                                <div id="progress" class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>
+                            </div>
+                            <label class="layui-form-label layui-bg-black">根据您本地IP生成的最佳hosts内容</label>
+                            <blockquote id="contentArea" class="layui-elem-quote" style="white-space: pre;height: 800px">正在生成中。。。请稍等，稍后会自动刷新</blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script th:inline="javascript">
+    layui.use(['form','util'], function () {
+
+    });
+
+    let taskId=[[${taskId}]]
+
+    $.ajax({
+        url:'/genHosts',
+        type:'get',
+        data:{taskId : taskId},
+        success:function (data) {
+            $("#contentArea").html(data);
+        }
+    })
+
+    let timer = setInterval(function(){
+        $.ajax({
+            url:'/getProgress',
+            type:'get',
+            data:{taskId : taskId},
+            success:function (n) {
+                if(n>=100){
+                    n = 100;
+                    clearInterval(timer);
+                }
+                element.progress('progress', n+'%');
+            }
+        })
+    }, 1000);
+</script>
+</html>
