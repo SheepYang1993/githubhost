@@ -1,6 +1,6 @@
 一款自动选取并生成github最快CDN IP的小工具，生成后贴到hosts文件即可
 
-## [下载Jar包]()
+## [下载Jar包](https://gitee.com/bryan31/githubhost/raw/master/bin/githubhost.jar)
 
 ## 运行方法
 ```shell script
