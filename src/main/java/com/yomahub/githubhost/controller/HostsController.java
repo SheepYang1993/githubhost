@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -118,18 +119,20 @@ public class HostsController {
             requestUrl = StrUtil.format("http://{}.{}/{}",domainName,ipAddressUrl,host);
         }
 
-        Connection.Response response = null;
+        String content;
         try {
-            response = Jsoup.connect(requestUrl).execute();
-        } catch (IOException e) {
+            content = Jsoup.connect(requestUrl).execute().body();
+        } catch (Exception e) {
             return null;
         }
-        String content = response.body();
-        Document doc = Jsoup.parse(content);
+
+        if (StringUtils.isEmpty(content)) {
+            return null;
+        }
 
         Elements elements;
         try{
-            elements = doc.select("table[class=panel-item table table-stripes table-v]").get(0)
+            elements = Jsoup.parse(content).select("table[class=panel-item table table-stripes table-v]").get(0)
                     .select("tr").last().select("td ul li");
         }catch (Exception e){
             return null;
