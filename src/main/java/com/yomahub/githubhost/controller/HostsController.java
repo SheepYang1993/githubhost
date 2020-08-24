@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.InetAddress;
@@ -117,7 +118,12 @@ public class HostsController {
             requestUrl = StrUtil.format("http://{}.{}/{}",domainName,ipAddressUrl,host);
         }
 
-        Connection.Response response = Jsoup.connect(requestUrl).execute();
+        Connection.Response response = null;
+        try {
+            response = Jsoup.connect(requestUrl).execute();
+        } catch (IOException e) {
+            return null;
+        }
         String content = response.body();
         Document doc = Jsoup.parse(content);
 
@@ -145,12 +151,7 @@ public class HostsController {
             }
 
             //按ping的耗时正序排
-            ListUtil.sort(ipPingVOList, new Comparator<IpPingVO>() {
-                @Override
-                public int compare(IpPingVO o1, IpPingVO o2) {
-                    return o1.getPingTime().compareTo(o2.getPingTime());
-                }
-            });
+            ListUtil.sort(ipPingVOList, (o1, o2) -> o1.getPingTime().compareTo(o2.getPingTime()));
 
             //取第一个，也就是最小的耗时放入resultList
             String bestIp = ipPingVOList.get(0).getIp();
