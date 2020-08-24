@@ -154,7 +154,7 @@ public class HostsController {
             }
 
             //按ping的耗时正序排
-            ListUtil.sort(ipPingVOList, (o1, o2) -> o1.getPingTime().compareTo(o2.getPingTime()));
+            ListUtil.sort(ipPingVOList, Comparator.comparing(IpPingVO::getPingTime));
 
             //取第一个，也就是最小的耗时放入resultList
             String bestIp = ipPingVOList.get(0).getIp();
