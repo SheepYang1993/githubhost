@@ -71,8 +71,12 @@ public class HostsController {
         try{
             int completedCount = 0;
             List<HostVO> hostVOList = new ArrayList<>();
+            HostVO hostVO;
             for(String githubHost : githubHosts){
-                hostVOList.add(getBestCdnIpForHost(githubHost));
+                hostVO = getBestCdnIpForHost(githubHost);
+                if(hostVO != null){
+                    hostVOList.add(hostVO);
+                }
                 completedCount++;
                 taskProgressMap.put(taskId,completedCount);
             }
@@ -116,8 +120,14 @@ public class HostsController {
         Connection.Response response = Jsoup.connect(requestUrl).execute();
         String content = response.body();
         Document doc = Jsoup.parse(content);
-        Elements elements = doc.select("table[class=panel-item table table-stripes table-v]").get(0)
-                .select("tr").last().select("td ul li");
+
+        Elements elements;
+        try{
+            elements = doc.select("table[class=panel-item table table-stripes table-v]").get(0)
+                    .select("tr").last().select("td ul li");
+        }catch (Exception e){
+            return null;
+        }
 
         //定义返回hostVO
         HostVO hostVO = null;
