@@ -110,6 +110,9 @@ public class URLUtil {
                 availCount++;
             }
         }
+        if(availCount == 0){
+            return 0;
+        }        
         return totalTime/availCount;
     }
 }
