@@ -56,8 +56,8 @@ public class HostsController {
     @ResponseBody
     public Integer getProgress(String taskId){
         if(taskProgressMap.containsKey(taskId)){
-            BigDecimal progress = new BigDecimal(taskProgressMap.get(taskId)).divide(new BigDecimal(githubHosts.size()))
-                    .multiply(new BigDecimal(100)).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal progress = new BigDecimal(taskProgressMap.get(taskId)).divide(new BigDecimal(githubHosts.size()),2,RoundingMode.HALF_UP)
+                    .multiply(new BigDecimal(100));
             if(progress.compareTo(new BigDecimal(100)) == 0){
                 taskProgressMap.remove(taskId);
             }
